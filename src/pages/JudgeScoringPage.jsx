@@ -109,7 +109,7 @@ export default function JudgeScoringPage() {
             Your evaluation for {student.name} has been recorded. The student will receive this feedback shortly.
           </p>
           <button
-            onClick={() => navigate("/judge/students")}
+            onClick={() => navigate("/judge/student-profiles")}
             style={{
               padding: "0.75rem 1.5rem",
               background: "linear-gradient(135deg, var(--color-maroon) 0%, #7a1d1d 100%)",
@@ -338,7 +338,7 @@ export default function JudgeScoringPage() {
             </button>
             <button
               type="button"
-              onClick={() => navigate("/judge/students")}
+              onClick={() => navigate("/judge/student-profiles")}
               style={{
                 padding: "0.9375rem 1.5rem",
                 background: "white",

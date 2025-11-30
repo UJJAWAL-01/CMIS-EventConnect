@@ -187,7 +187,7 @@ export default function JudgeCasesPage() {
             </div>
 
             <button
-              onClick={() => navigate(`/judge/students`, { state: { caseId: caseItem.id } })}
+              onClick={() => navigate(`/judge/student-profiles`, { state: { caseId: caseItem.id } })}
               style={{
                 width: "100%",
                 padding: "0.75rem",
