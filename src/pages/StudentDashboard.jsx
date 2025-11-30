@@ -1,4 +1,8 @@
+import { useNavigate } from "react-router-dom";
+
 export default function StudentDashboard() {
+  const navigate = useNavigate();
+
   // TODO: Fetch from backend /api/student/summary
   const studentData = {
     name: "Alex Johnson",
@@ -133,16 +137,32 @@ export default function StudentDashboard() {
       <div className="card" style={{ marginBottom: "2rem" }}>
         <h3 style={{ marginTop: 0 }}>Quick Actions</h3>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: "1rem" }}>
-          <button className="secondary-btn" style={{ width: "100%", marginTop: 0 }}>
+          <button 
+            className="secondary-btn" 
+            style={{ width: "100%", marginTop: 0 }}
+            onClick={() => navigate("/student/profile")}
+          >
             📝 Update Profile
           </button>
-          <button className="secondary-btn" style={{ width: "100%", marginTop: 0 }}>
+          <button 
+            className="secondary-btn" 
+            style={{ width: "100%", marginTop: 0 }}
+            onClick={() => navigate("/student/resumes")}
+          >
             📤 Upload Resume
           </button>
-          <button className="secondary-btn" style={{ width: "100%", marginTop: 0 }}>
-            🔍 Browse Jobs
+          <button 
+            className="secondary-btn" 
+            style={{ width: "100%", marginTop: 0 }}
+            onClick={() => navigate("/student/events")}
+          >
+            🎯 Browse Events
           </button>
-          <button className="secondary-btn" style={{ width: "100%", marginTop: 0 }}>
+          <button 
+            className="secondary-btn" 
+            style={{ width: "100%", marginTop: 0 }}
+            onClick={() => navigate("/student/mentors")}
+          >
             👥 Find Mentors
           </button>
         </div>

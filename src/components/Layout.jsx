@@ -17,11 +17,12 @@ export default function Layout({ role = "student", onLogout }) {
       { label: "Profile", path: "/student/profile" },
       { label: "Resumes", path: "/student/resumes" },
       { label: "Applications", path: "/student/applications" },
+      { label: "Events", path: "/student/events" },
     ],
     judge: [
       { label: "Dashboard", path: "/judge" },
+      { label: "Student Profiles", path: "/judge/student-profiles" },
       { label: "Cases", path: "/judge/cases" },
-      { label: "Scoring", path: "/judge/scoring" },
     ],
     instructor: [
       { label: "Dashboard", path: "/instructor" },

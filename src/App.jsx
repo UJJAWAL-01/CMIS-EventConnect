@@ -7,7 +7,11 @@ import StudentDashboard from "./pages/StudentDashboard";
 import StudentProfilePage from "./pages/StudentProfilePage";
 import StudentResumesPage from "./pages/StudentResumesPage";
 import StudentApplicationsPage from "./pages/StudentApplicationsPage";
+import StudentEventRegistrationPage from "./pages/StudentEventRegistrationPage";
 import JudgeDashboard from "./pages/JudgeDashboard";
+import JudgeStudentProfilesPage from "./pages/JudgeStudentProfilesPage";
+import JudgeCasesPage from "./pages/JudgeCasesPage";
+import JudgeScoringPage from "./pages/JudgeScoringPage";
 import InstructorDashboard from "./pages/InstructorDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 
@@ -60,6 +64,7 @@ function App() {
           <Route path="profile" element={<StudentProfilePage />} />
           <Route path="resumes" element={<StudentResumesPage />} />
           <Route path="applications" element={<StudentApplicationsPage />} />
+          <Route path="events" element={<StudentEventRegistrationPage />} />
         </Route>
 
         {/* Judge routes */}
@@ -68,6 +73,9 @@ function App() {
           element={role === "judge" ? <Layout role={role} onLogout={handleLogout} /> : <Navigate to="/login" replace />}
         >
           <Route index element={<JudgeDashboard />} />
+          <Route path="student-profiles" element={<JudgeStudentProfilesPage />} />
+          <Route path="cases" element={<JudgeCasesPage />} />
+          <Route path="scoring/:caseId" element={<JudgeScoringPage />} />
         </Route>
 
         {/* Instructor routes */}
