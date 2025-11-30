@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 
 export default function LoginPage({ onLogin }) {
+    const ROLES = ["Student", "Judge", "Instructor", "Admin"];
   const [role, setRole] = useState("Student");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -50,9 +51,8 @@ export default function LoginPage({ onLogin }) {
     console.log("LOGIN", { email, role, timestamp: new Date().toISOString() });
     
     if (onLogin) {
-      onLogin(role);
-    }
-
+  onLogin(role.toLowerCase());
+}
     setIsValidating(false);
   };
 

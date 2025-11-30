@@ -21,11 +21,11 @@ function App() {
   });
 
   const handleLogin = (userRole) => {
-    setIsLoggedIn(true);
-    setRole(userRole.toLowerCase());
-    localStorage.setItem("isLoggedIn", "true");
-    localStorage.setItem("userRole", userRole.toLowerCase());
-  };
+  setIsLoggedIn(true);                    //  <-- THIS sets isLoggedIn = true
+  setRole(userRole.toLowerCase());        //  <-- THIS sets role = selected role
+  localStorage.setItem("isLoggedIn", "true");
+  localStorage.setItem("userRole", userRole.toLowerCase());
+};
 
   const handleLogout = () => {
     setIsLoggedIn(false);
