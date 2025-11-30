@@ -1,16 +1,30 @@
+/* ========================================
+   CMIS EventConnect - Authentication Styles
+   Enterprise Grade UI for Login/Register
+   ======================================== */
 
 :root {
-  /* Texas A&M maroon + neutrals */
+  /* Texas A&M maroon and white theme */
   --color-maroon: #500000;
   --color-maroon-dark: #320000;
-  --color-gold: #ffcc66;
+  --color-maroon-light: #fef2f2;
+  --color-white: #ffffff;
   --color-bg: #f9fafb;
   --color-surface: #ffffff;
   --color-border: #e5e7eb;
+  --color-border-dark: #d1d5db;
   --color-text: #111827;
+  --color-text-light: #6b7280;
+  --color-text-secondary: #6b7280;
+  --color-error: #ef4444;
+  --color-error-light: #fee2e2;
+  --color-success: #10b981;
+  --color-success-light: #d1fae5;
   --radius-md: 0.75rem;
   --radius-lg: 1rem;
-  --shadow-soft: 0 12px 30px rgba(15, 23, 42, 0.15);
+  --shadow-soft: 0 2px 8px rgba(80, 0, 0, 0.08);
+  --shadow-md: 0 4px 12px rgba(80, 0, 0, 0.12);
+  --shadow-lg: 0 10px 25px rgba(80, 0, 0, 0.15);
 }
 
 *,
@@ -28,60 +42,82 @@ body,
 }
 
 body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    sans-serif;
-  background: radial-gradient(circle at top left, #f3f4f6, #e5e7eb);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 50%, #eeeff5 100%);
   color: var(--color-text);
 }
 
-/* Shared utility styles */
-
+/* ========== AUTH SHELL ========== */
 .auth-shell {
   min-height: 100vh;
   display: flex;
-  align-items: stretch;
+  align-items: center;
   justify-content: center;
   padding: 1.5rem;
+  background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 50%, #eeeff5 100%);
 }
 
 .auth-card {
   display: grid;
   grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
-  max-width: 960px;
+  max-width: 1000px;
   width: 100%;
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.95);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-soft);
+  box-shadow: var(--shadow-lg);
   overflow: hidden;
+  border: 1px solid rgba(80, 0, 0, 0.08);
+  backdrop-filter: blur(10px);
 }
 
-/* Left: form */
+/* Left: form section */
 .auth-main {
-  padding: 2.25rem 2rem;
+  padding: 3rem 2.5rem;
+  background: white;
+  overflow-y: auto;
+  max-height: 100vh;
 }
 
 @media (min-width: 900px) {
   .auth-main {
-    padding: 2.75rem 2.5rem;
+    padding: 3.5rem 3rem;
   }
 }
 
-/* Right: TAMU branding */
+/* Right: TAMU branding section */
 .auth-aside {
   background: linear-gradient(
       135deg,
-      rgba(0, 0, 0, 0.35),
-      rgba(0, 0, 0, 0.7)
+      rgba(80, 0, 0, 0.9) 0%,
+      rgba(50, 0, 0, 0.95) 100%
     ),
-    url("https://upload.wikimedia.org/wikipedia/commons/5/5b/Texas_A%26M_University_Academic_Building.jpg")
-      center/cover no-repeat;
+    linear-gradient(45deg, rgba(0, 0, 0, 0.1), transparent);
   color: #f9fafb;
-  padding: 2.5rem 2rem;
+  padding: 3rem 2.5rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  position: relative;
+  overflow: hidden;
 }
 
+.auth-aside::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.05), transparent);
+  pointer-events: none;
+}
+
+.auth-aside > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* TAMU Badge */
 .auth-tamu-badge {
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -89,120 +125,373 @@ body {
   color: #f9fafb;
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
+  font-size: 0.85rem;
 }
 
-.auth-tamu-badge span {
-  width: 32px;
-  height: 32px;
+.auth-tamu-badge span:first-child {
+  width: 36px;
+  height: 36px;
   border-radius: 999px;
-  border: 2px solid #f9fafb;
+  border: 2.5px solid #f9fafb;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 800;
+  font-weight: 900;
+  font-size: 0.9rem;
 }
 
-/* Headings and text */
-
+/* ========== HEADINGS ========== */
 .auth-title {
-  font-size: 1.75rem;
+  font-size: 2rem;
   font-weight: 700;
   color: var(--color-maroon);
-  margin-bottom: 0.25rem;
+  margin: 0 0 0.5rem 0;
+  line-height: 1.2;
 }
 
 .auth-subtitle {
-  font-size: 0.95rem;
-  color: #4b5563;
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+  margin: 0;
+  line-height: 1.5;
 }
 
-/* Form elements */
-
+/* ========== FORM ELEMENTS ========== */
 .field {
-  margin-top: 1rem;
+  margin-top: 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.5rem;
 }
 
 .field label {
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: #374151;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-text);
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.field label .required {
+  color: var(--color-error);
+  font-weight: 700;
+}
+
+.field-hint {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+  margin-top: -0.25rem;
 }
 
 .field input,
-.field select {
-  padding: 0.55rem 0.65rem;
+.field select,
+.field textarea {
+  padding: 0.875rem 1rem;
   border-radius: 0.5rem;
-  border: 1px solid #d1d5db;
-  font-size: 0.95rem;
+  border: 2px solid var(--color-border);
+  font-size: 0.9375rem;
+  font-family: inherit;
+  transition: all 200ms ease;
+  background: white;
+}
+
+.field input::placeholder,
+.field select::placeholder,
+.field textarea::placeholder {
+  color: var(--color-text-secondary);
 }
 
 .field input:focus,
-.field select:focus {
-  outline: 2px solid rgba(80, 0, 0, 0.25);
+.field select:focus,
+.field textarea:focus {
+  outline: none;
   border-color: var(--color-maroon);
+  box-shadow: 0 0 0 3px rgba(80, 0, 0, 0.1);
 }
 
+.field input.input-error,
+.field select.input-error,
+.field textarea.input-error {
+  border-color: var(--color-error);
+  background-color: var(--color-error-light);
+}
+
+.field input.input-error:focus,
+.field select.input-error:focus,
+.field textarea.input-error:focus {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.field input.input-success,
+.field select.input-success,
+.field textarea.input-success {
+  border-color: var(--color-success);
+  background-color: var(--color-success-light);
+}
+
+.field input.input-success:focus,
+.field select.input-success:focus,
+.field textarea.input-success:focus {
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.field input:disabled,
+.field select:disabled,
+.field textarea:disabled {
+  background-color: var(--color-bg);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* ========== ERROR / SUCCESS ALERTS ========== */
+.alert {
+  padding: 1rem;
+  border-radius: 0.5rem;
+  border-left: 4px solid;
+  margin-bottom: 1.5rem;
+  animation: slideUp 200ms ease-out;
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.alert-error {
+  background-color: var(--color-error-light);
+  border-color: var(--color-error);
+  color: #7f1d1d;
+}
+
+.alert-success {
+  background-color: var(--color-success-light);
+  border-color: var(--color-success);
+  color: #065f46;
+}
+
+.alert-warning {
+  background-color: #fef3c7;
+  border-color: #f59e0b;
+  color: #92400e;
+}
+
+.alert strong {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.alert p {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+/* ========== PRIMARY BUTTON ========== */
 .primary-btn {
-  margin-top: 1.25rem;
   width: 100%;
-  padding: 0.65rem 0.9rem;
-  border-radius: 999px;
+  margin-top: 1.5rem;
+  padding: 0.875rem 1.5rem;
+  border-radius: 0.5rem;
   border: none;
-  background: var(--color-maroon);
+  background: linear-gradient(135deg, var(--color-maroon) 0%, var(--color-maroon-dark) 100%);
   color: #f9fafb;
   font-weight: 600;
-  font-size: 0.98rem;
+  font-size: 1rem;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.4rem;
+  gap: 0.5rem;
+  transition: all 200ms ease;
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
 }
 
-.primary-btn:hover {
-  background: var(--color-maroon-dark);
+.primary-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--color-maroon-dark) 0%, #2a0000 100%);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
 }
 
-.link-text {
+.primary-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.primary-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ========== SECONDARY / TERTIARY BUTTONS ========== */
+.secondary-btn {
+  width: 100%;
+  margin-top: 1.5rem;
+  padding: 0.875rem 1.5rem;
+  border-radius: 0.5rem;
+  border: 2px solid var(--color-maroon);
+  background: transparent;
   color: var(--color-maroon);
-  font-weight: 500;
-  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 200ms ease;
 }
 
-.link-text:hover {
+.secondary-btn:hover:not(:disabled) {
+  background: var(--color-maroon);
+  color: white;
+}
+
+.tertiary-btn {
+  width: 100%;
+  margin-top: 1.5rem;
+  padding: 0.875rem 1.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.tertiary-btn:hover:not(:disabled) {
+  background: var(--color-border);
+}
+
+/* ========== LINK STYLING ========== */
+a {
+  color: var(--color-maroon);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 150ms ease;
+}
+
+a:hover {
+  color: var(--color-maroon-dark);
   text-decoration: underline;
 }
 
-/* Role pills */
-
+/* ========== ROLE PILL GROUP ========== */
 .role-pill-group {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.4rem;
-  margin-top: 0.5rem;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
 }
 
 .role-pill {
-  padding: 0.25rem 0.7rem;
+  padding: 0.5rem 1rem;
   border-radius: 999px;
-  font-size: 0.8rem;
-  border: 1px solid #e5e7eb;
-  background: #f9fafb;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: 2px solid var(--color-border);
+  background: white;
+  color: var(--color-text);
   cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.role-pill:hover:not(:disabled) {
+  border-color: var(--color-maroon);
+  color: var(--color-maroon);
 }
 
 .role-pill.active {
-  background: var(--color-maroon);
-  color: #f9fafb;
-  border-color: var(--color-maroon);
+  background: linear-gradient(135deg, var(--color-maroon) 0%, var(--color-maroon-dark) 100%);
+  color: white;
+  border-color: var(--color-maroon-dark);
+  box-shadow: var(--shadow-md);
 }
 
-/* Responsive layout */
+.role-pill:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
 
+/* ========== PASSWORD STRENGTH METER ========== */
+.password-strength-meter {
+  width: 100%;
+  height: 6px;
+  background-color: var(--color-border);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 0.75rem;
+}
+
+.password-strength-meter-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-error), var(--color-error) 20%, #f59e0b 50%, var(--color-success) 100%);
+  transition: width 200ms ease;
+}
+
+.password-strength-text {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* ========== PASSWORD REQUIREMENTS ========== */
+.password-requirements {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+.requirement-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 0.5rem;
+  transition: color 150ms ease;
+  font-weight: 500;
+}
+
+.requirement-item:last-child {
+  margin-bottom: 0;
+}
+
+.requirement-item::before {
+  content: '✕';
+  font-weight: 700;
+  color: var(--color-error);
+  font-size: 1rem;
+  width: 20px;
+  text-align: center;
+}
+
+.requirement-item.met {
+  color: var(--color-success);
+}
+
+.requirement-item.met::before {
+  content: '✓';
+  color: var(--color-success);
+}
+
+/* ========== ANIMATIONS ========== */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ========== RESPONSIVE DESIGN ========== */
 @media (max-width: 768px) {
   .auth-card {
     grid-template-columns: minmax(0, 1fr);
@@ -213,6 +502,59 @@ body {
   }
 
   .auth-main {
-    padding: 1.75rem 1.5rem;
+    padding: 2rem 1.5rem;
+  }
+
+  .auth-title {
+    font-size: 1.5rem;
+  }
+
+  .field label {
+    font-size: 0.875rem;
+  }
+
+  .field input,
+  .field select,
+  .field textarea {
+    font-size: 16px;
+  }
+
+  .role-pill-group {
+    gap: 0.375rem;
+  }
+
+  .role-pill {
+    padding: 0.375rem 0.875rem;
+    font-size: 0.8125rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-shell {
+    padding: 1rem;
+  }
+
+  .auth-main {
+    padding: 1.5rem;
+  }
+
+  .auth-title {
+    font-size: 1.25rem;
+  }
+
+  .primary-btn,
+  .secondary-btn,
+  .tertiary-btn {
+    padding: 0.75rem 1rem;
+    font-size: 0.9375rem;
+  }
+
+  .field {
+    margin-top: 1rem;
+  }
+
+  .alert {
+    padding: 0.875rem;
+    font-size: 0.875rem;
   }
 }
