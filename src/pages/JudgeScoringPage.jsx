@@ -1,21 +1,46 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 
 export default function JudgeScoringPage() {
   const { studentId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-  const student = location.state?.student || {};
+  const student = location.state?.student || { 
+    id: studentId, 
+    name: "Student", 
+    teamName: "Team",
+    email: "student@tamu.edu"
+  };
 
-  const [scores, setScores] = useState({
-    strategy: 0,
-    analysis: 0,
-    presentation: 0,
-    teamwork: 0
+  // Initialize scores from localStorage or state
+  const [scores, setScores] = useState(() => {
+    const saved = localStorage.getItem(`scores_${studentId}`);
+    return saved ? JSON.parse(saved) : {
+      strategy: 0,
+      analysis: 0,
+      presentation: 0,
+      teamwork: 0
+    };
   });
-  const [feedback, setFeedback] = useState("");
+  
+  const [feedback, setFeedback] = useState(() => {
+    return localStorage.getItem(`feedback_${studentId}`) || "";
+  });
+  
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+  const [submitted, setSubmitted] = useState(() => {
+    return localStorage.getItem(`submitted_${studentId}`) === "true";
+  });
+
+  // Save scores to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem(`scores_${studentId}`, JSON.stringify(scores));
+  }, [scores, studentId]);
+
+  // Save feedback to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem(`feedback_${studentId}`, feedback);
+  }, [feedback, studentId]);
 
   // TODO: Fetch from backend /api/students/:studentId/submission
   const mockSubmission = {
@@ -95,6 +120,17 @@ export default function JudgeScoringPage() {
     console.log("Submitting scores:", { studentId, scores, feedback, totalScore });
     
     await new Promise(resolve => setTimeout(resolve, 500));
+    
+    // Save submission state to localStorage
+    localStorage.setItem(`submitted_${studentId}`, "true");
+    localStorage.setItem(`submission_${studentId}`, JSON.stringify({
+      studentId,
+      scores,
+      feedback,
+      totalScore,
+      submittedAt: new Date().toISOString()
+    }));
+    
     setIsSubmitting(false);
     setSubmitted(true);
   };
@@ -131,12 +167,26 @@ export default function JudgeScoringPage() {
     <div style={{ padding: "2rem", background: "linear-gradient(135deg, #f9fafb 0%, #f3f4f6 50%, #eeeff5 100%)", minHeight: "100vh" }}>
       {/* Header */}
       <header style={{ marginBottom: "2rem" }}>
-        <h1 style={{ fontSize: "2.25rem", fontWeight: 700, margin: 0, marginBottom: "0.5rem", color: "var(--color-text)" }}>
-          Score {student.name || "Student"}'s Submission
-        </h1>
-        <p style={{ color: "var(--color-text-secondary)", margin: 0, fontSize: "1rem" }}>
-          Team: {student.teamName || "N/A"}
-        </p>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start" }}>
+          <div>
+            <h1 style={{ fontSize: "2.25rem", fontWeight: 700, margin: 0, marginBottom: "0.5rem", color: "var(--color-text)" }}>
+              Score {student.name || "Student"}'s Submission
+            </h1>
+            <p style={{ color: "var(--color-text-secondary)", margin: 0, fontSize: "1rem" }}>
+              Team: {student.teamName || "N/A"}
+            </p>
+          </div>
+          <div style={{ 
+            padding: "0.75rem 1rem", 
+            background: "#ecfdf5", 
+            borderRadius: "0.5rem", 
+            fontSize: "0.875rem",
+            color: "#15803d",
+            fontWeight: 600
+          }}>
+            💾 Auto-saving
+          </div>
+        </div>
       </header>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))", gap: "2rem" }}>

@@ -75,7 +75,7 @@ function App() {
           <Route index element={<JudgeDashboard />} />
           <Route path="student-profiles" element={<JudgeStudentProfilesPage />} />
           <Route path="cases" element={<JudgeCasesPage />} />
-          <Route path="scoring/:caseId" element={<JudgeScoringPage />} />
+          <Route path="score/:studentId" element={<JudgeScoringPage />} />
         </Route>
 
         {/* Instructor routes */}
