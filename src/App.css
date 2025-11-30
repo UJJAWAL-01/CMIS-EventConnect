@@ -1,0 +1,218 @@
+
+:root {
+  /* Texas A&M maroon + neutrals */
+  --color-maroon: #500000;
+  --color-maroon-dark: #320000;
+  --color-gold: #ffcc66;
+  --color-bg: #f9fafb;
+  --color-surface: #ffffff;
+  --color-border: #e5e7eb;
+  --color-text: #111827;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --shadow-soft: 0 12px 30px rgba(15, 23, 42, 0.15);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  background: radial-gradient(circle at top left, #f3f4f6, #e5e7eb);
+  color: var(--color-text);
+}
+
+/* Shared utility styles */
+
+.auth-shell {
+  min-height: 100vh;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.auth-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  max-width: 960px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  overflow: hidden;
+}
+
+/* Left: form */
+.auth-main {
+  padding: 2.25rem 2rem;
+}
+
+@media (min-width: 900px) {
+  .auth-main {
+    padding: 2.75rem 2.5rem;
+  }
+}
+
+/* Right: TAMU branding */
+.auth-aside {
+  background: linear-gradient(
+      135deg,
+      rgba(0, 0, 0, 0.35),
+      rgba(0, 0, 0, 0.7)
+    ),
+    url("https://upload.wikimedia.org/wikipedia/commons/5/5b/Texas_A%26M_University_Academic_Building.jpg")
+      center/cover no-repeat;
+  color: #f9fafb;
+  padding: 2.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.auth-tamu-badge {
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #f9fafb;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.auth-tamu-badge span {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  border: 2px solid #f9fafb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+}
+
+/* Headings and text */
+
+.auth-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--color-maroon);
+  margin-bottom: 0.25rem;
+}
+
+.auth-subtitle {
+  font-size: 0.95rem;
+  color: #4b5563;
+}
+
+/* Form elements */
+
+.field {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.field label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.field input,
+.field select {
+  padding: 0.55rem 0.65rem;
+  border-radius: 0.5rem;
+  border: 1px solid #d1d5db;
+  font-size: 0.95rem;
+}
+
+.field input:focus,
+.field select:focus {
+  outline: 2px solid rgba(80, 0, 0, 0.25);
+  border-color: var(--color-maroon);
+}
+
+.primary-btn {
+  margin-top: 1.25rem;
+  width: 100%;
+  padding: 0.65rem 0.9rem;
+  border-radius: 999px;
+  border: none;
+  background: var(--color-maroon);
+  color: #f9fafb;
+  font-weight: 600;
+  font-size: 0.98rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+.primary-btn:hover {
+  background: var(--color-maroon-dark);
+}
+
+.link-text {
+  color: var(--color-maroon);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.link-text:hover {
+  text-decoration: underline;
+}
+
+/* Role pills */
+
+.role-pill-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+}
+
+.role-pill {
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  cursor: pointer;
+}
+
+.role-pill.active {
+  background: var(--color-maroon);
+  color: #f9fafb;
+  border-color: var(--color-maroon);
+}
+
+/* Responsive layout */
+
+@media (max-width: 768px) {
+  .auth-card {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .auth-aside {
+    display: none;
+  }
+
+  .auth-main {
+    padding: 1.75rem 1.5rem;
+  }
+}
