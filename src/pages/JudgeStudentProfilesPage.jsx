@@ -1,61 +1,39 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { api } from "../lib/api";
 
 export default function JudgeStudentProfilesPage() {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [filterEvent, setFilterEvent] = useState("");
 
-  // TODO: Fetch from backend /api/students (filtered by assigned judge)
-  const mockStudents = [
-    {
-      id: 1,
-      name: "Alex Johnson",
-      email: "alex.j@tamu.edu",
-      uinr: "427001234",
-      teamName: "The Strategists",
-      eventId: 1,
-      eventName: "Case Competition 2025",
-      registrationDate: "Nov 28, 2025",
-      submissionStatus: "submitted",
-      score: null,
-      status: "pending_feedback"
-    },
-    {
-      id: 2,
-      name: "Jordan Smith",
-      email: "jordan.s@tamu.edu",
-      uinr: "427005678",
-      teamName: "Market Mavens",
-      eventId: 1,
-      eventName: "Case Competition 2025",
-      registrationDate: "Nov 27, 2025",
-      submissionStatus: "submitted",
-      score: 85,
-      status: "feedback_given"
-    },
-    {
-      id: 3,
-      name: "Casey Brown",
-      email: "casey.b@tamu.edu",
-      uinr: "427009012",
-      teamName: "Innovation Lab",
-      eventId: 2,
-      eventName: "Business Plan Competition",
-      registrationDate: "Nov 25, 2025",
-      submissionStatus: "not_submitted",
-      score: null,
-      status: "registered"
-    }
-  ];
+  // Fetch from backend /api/students
+  const [students, setStudents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const events = [...new Set(mockStudents.map(s => ({ id: s.eventId, name: s.eventName })))];
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const { data } = await api.get('/students');
+        if (!mounted) return;
+        setStudents(Array.isArray(data) ? data : []);
+      } catch (e) {
+        setError(e?.response?.data?.message || 'Failed to load students');
+      } finally {
+        setLoading(false);
+      }
+    })();
+    return () => { mounted = false; };
+  }, []);
 
-  const filteredStudents = mockStudents.filter(student => {
-    const matchesSearch = student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         student.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         student.teamName.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFilter = !filterEvent || student.eventId === parseInt(filterEvent);
+  const events = [];
+
+  const filteredStudents = students.filter(student => {
+    const text = `${student.major || ''} ${student.year || ''} ${student.gpa || ''}`.toLowerCase();
+    const matchesSearch = text.includes(searchTerm.toLowerCase());
+    const matchesFilter = !filterEvent; // placeholder until events exist
     return matchesSearch && matchesFilter;
   });
 
@@ -70,9 +48,7 @@ export default function JudgeStudentProfilesPage() {
   };
 
   const getSubmissionBadge = (status) => {
-    return status === "submitted" 
-      ? <span style={{ color: "#10b981", fontSize: "0.9rem", fontWeight: 600 }}>✓ Submitted</span>
-      : <span style={{ color: "#ef4444", fontSize: "0.9rem", fontWeight: 600 }}>○ Pending</span>;
+    return <span style={{ color: "#6b7280", fontSize: "0.9rem", fontWeight: 600 }}>—</span>;
   };
 
   return (
@@ -132,17 +108,25 @@ export default function JudgeStudentProfilesPage() {
         </div>
       </div>
 
+      {/* Error/Loading */}
+      {loading && (
+        <div className="card" style={{ marginBottom: "1rem" }}>Loading students…</div>
+      )}
+      {error && (
+        <div className="card" style={{ marginBottom: "1rem", color: "var(--color-error)" }}>{error}</div>
+      )}
+
       {/* Students Grid */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "1.5rem" }}>
         {filteredStudents.map(student => (
-          <div key={student.id} className="card" style={{ marginBottom: 0 }}>
+          <div key={student._id} className="card" style={{ marginBottom: 0 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", marginBottom: "1rem" }}>
               <div>
                 <h3 style={{ margin: 0, marginBottom: "0.25rem", fontSize: "1.125rem", fontWeight: 700 }}>
-                  {student.name}
+                  {student.major || 'Student'}
                 </h3>
                 <p style={{ margin: 0, color: "var(--color-text-secondary)", fontSize: "0.875rem" }}>
-                  {student.email}
+                  Year {student.year} • GPA {student.gpa}
                 </p>
               </div>
               {getStatusBadge(student.status)}
@@ -151,20 +135,20 @@ export default function JudgeStudentProfilesPage() {
             <div style={{ paddingTop: "1rem", borderTop: "1px solid #e5e7eb", marginBottom: "1rem" }}>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", fontSize: "0.875rem" }}>
                 <div>
-                  <div style={{ color: "var(--color-text-secondary)", marginBottom: "0.25rem" }}>UINR</div>
-                  <div style={{ fontWeight: 600 }}>{student.uinr}</div>
+                  <div style={{ color: "var(--color-text-secondary)", marginBottom: "0.25rem" }}>User</div>
+                  <div style={{ fontWeight: 600 }}>{String(student.user).slice(0,8)}…</div>
                 </div>
                 <div>
-                  <div style={{ color: "var(--color-text-secondary)", marginBottom: "0.25rem" }}>Team</div>
-                  <div style={{ fontWeight: 600 }}>{student.teamName}</div>
+                  <div style={{ color: "var(--color-text-secondary)", marginBottom: "0.25rem" }}>GPA</div>
+                  <div style={{ fontWeight: 600 }}>{student.gpa}</div>
                 </div>
                 <div>
-                  <div style={{ color: "var(--color-text-secondary)", marginBottom: "0.25rem" }}>Event</div>
-                  <div style={{ fontWeight: 600 }}>{student.eventName}</div>
+                  <div style={{ color: "var(--color-text-secondary)", marginBottom: "0.25rem" }}>Major</div>
+                  <div style={{ fontWeight: 600 }}>{student.major}</div>
                 </div>
                 <div>
-                  <div style={{ color: "var(--color-text-secondary)", marginBottom: "0.25rem" }}>Registered</div>
-                  <div style={{ fontWeight: 600 }}>{student.registrationDate}</div>
+                  <div style={{ color: "var(--color-text-secondary)", marginBottom: "0.25rem" }}>Year</div>
+                  <div style={{ fontWeight: 600 }}>{student.year}</div>
                 </div>
               </div>
             </div>
@@ -183,7 +167,7 @@ export default function JudgeStudentProfilesPage() {
             </div>
 
             <button
-              onClick={() => navigate(`/judge/score/${student.id}`, { state: { student } })}
+              onClick={() => navigate(`/judge/score/${student._id}`, { state: { student } })}
               style={{
                 width: "100%",
                 padding: "0.75rem",
@@ -196,7 +180,7 @@ export default function JudgeStudentProfilesPage() {
                 transition: "all 0.2s ease"
               }}
             >
-              {student.status === "feedback_given" ? "View Feedback" : "Score & Feedback"}
+              View Profile
             </button>
           </div>
         ))}

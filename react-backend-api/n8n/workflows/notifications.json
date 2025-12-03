@@ -1,0 +1,42 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "functionCode": "const students = await this.getInputData();\n\nfor (const student of students) {\n  // Logic to send notification to each student\n  await this.sendNotification(student);\n}\n\nreturn students;"
+      },
+      "name": "Send Notifications",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        250,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "event": "onNewStudent",
+        "workflowId": "1"
+      },
+      "name": "Trigger on New Student",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        100,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Trigger on New Student": {
+      "main": [
+        [
+          {
+            "node": "Send Notifications",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

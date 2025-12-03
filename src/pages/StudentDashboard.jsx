@@ -1,11 +1,24 @@
 import { useNavigate } from "react-router-dom";
+import { useMemo } from "react";
 
 export default function StudentDashboard() {
   const navigate = useNavigate();
 
+  // Get user name from JWT
+  const userName = useMemo(() => {
+    const token = localStorage.getItem('auth_token');
+    if (!token) return 'Student';
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload?.name || payload?.username?.split('@')[0] || 'Student';
+    } catch (e) {
+      return 'Student';
+    }
+  }, []);
+
   // TODO: Fetch from backend /api/student/summary
   const studentData = {
-    name: "Alex Johnson",
+    name: userName,
     profileCompletion: 70,
     resumeCount: 2,
     applications: {

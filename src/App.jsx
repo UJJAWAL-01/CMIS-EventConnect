@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Layout from "./components/Layout.jsx";
 import LoginPage from "./pages/LoginPage";
@@ -24,18 +24,32 @@ function App() {
     return localStorage.getItem("userRole") || "student";
   });
 
+  const token = localStorage.getItem('auth_token');
+  const firstName = useMemo(() => {
+    if (!token) return null;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const name = payload?.name || payload?.username || '';
+      const first = String(name).split(' ')[0];
+      return first || null;
+    } catch (e) {
+      return null;
+    }
+  }, [token]);
+
   const handleLogin = (userRole) => {
-  setIsLoggedIn(true);                    //  <-- THIS sets isLoggedIn = true
-  setRole(userRole.toLowerCase());        //  <-- THIS sets role = selected role
-  localStorage.setItem("isLoggedIn", "true");
-  localStorage.setItem("userRole", userRole.toLowerCase());
-};
+    setIsLoggedIn(true);
+    setRole(userRole.toLowerCase());
+    localStorage.setItem("isLoggedIn", "true");
+    localStorage.setItem("userRole", userRole.toLowerCase());
+  };
 
   const handleLogout = () => {
     setIsLoggedIn(false);
     setRole("student");
     localStorage.removeItem("isLoggedIn");
     localStorage.removeItem("userRole");
+    try { localStorage.removeItem('auth_token'); } catch (_) {}
   };
 
   // If not logged in, redirect to login

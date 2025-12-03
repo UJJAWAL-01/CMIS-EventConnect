@@ -1,0 +1,74 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "functionCode": "const studentData = $input.item.json;\n\n// Perform any necessary validation here\nif (!studentData.name || !studentData.email) {\n  throw new Error('Name and email are required.');\n}\n\nreturn studentData;"
+      },
+      "name": "Validate Student Data",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        250,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "resource": "student",
+        "jsonParameters": true,
+        "options": {},
+        "additionalFields": {
+          "data": "={{$json[\"name\"]}}"
+        }
+      },
+      "name": "Create Student",
+      "type": "n8n-nodes-base.mongodb",
+      "typeVersion": 1,
+      "position": [
+        450,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "resource": "email",
+        "toEmail": "={{$json[\"email\"]}}",
+        "subject": "Welcome to the Program",
+        "text": "Dear {{$json[\"name\"]}},\n\nWelcome to our program! We are excited to have you.\n\nBest regards,\nThe Team"
+      },
+      "name": "Send Welcome Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 1,
+      "position": [
+        650,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Validate Student Data": {
+      "main": [
+        [
+          {
+            "node": "Create Student",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Student": {
+      "main": [
+        [
+          {
+            "node": "Send Welcome Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

@@ -1,21 +1,23 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { login as apiLogin } from "../lib/api";
 
 export default function LoginPage({ onLogin }) {
-    const ROLES = ["Student", "Judge", "Instructor", "Admin"];
+  const ROLES = ["Student", "Judge", "Instructor", "Admin"];
   const [role, setRole] = useState("Student");
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isValidating, setIsValidating] = useState(false);
 
-  // Email validation for organizational members
-  const validateEmailDomain = (emailValue, selectedRole) => {
-    const tamuPattern = /@tamu\.edu$/;
-    if (["Student", "Instructor", "Admin"].includes(selectedRole)) {
-      return tamuPattern.test(emailValue);
+  // Decode JWT payload (to read role)
+  const parseJwt = (token) => {
+    try {
+      const base64 = token.split(".")[1];
+      return JSON.parse(atob(base64));
+    } catch (_) {
+      return null;
     }
-    return true; // Judges don't need @tamu.edu
   };
 
   const handleSubmit = async (e) => {
@@ -24,53 +26,29 @@ export default function LoginPage({ onLogin }) {
     setIsValidating(true);
 
     // Validation
-    if (!email || !password) {
-      setError("Please enter email and password.");
+    if (!username || !password) {
+      setError("Please enter username and password.");
       setIsValidating(false);
       return;
     }
 
-    // Email format validation
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(email)) {
-      setError("Please enter a valid email address.");
+    try {
+      const res = await apiLogin({ username, password });
+      const token = res?.token;
+      const claims = token ? parseJwt(token) : null;
+      const tokenRole = claims?.role ? String(claims.role).toLowerCase() : role.toLowerCase();
+      onLogin?.(tokenRole);
+    } catch (err) {
+      const msg = err?.response?.data?.message || "Invalid credentials";
+      setError(msg);
+    } finally {
       setIsValidating(false);
-      return;
     }
-
-    // Domain validation for organization members
-    if (!validateEmailDomain(email, role)) {
-      setError(`${role}s must use a valid Texas A&M email (@tamu.edu).`);
-      setIsValidating(false);
-      return;
-    }
-
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 500));
-
-    console.log("LOGIN", { email, role, timestamp: new Date().toISOString() });
-    
-    if (onLogin) {
-  onLogin(role.toLowerCase());
-}
-    setIsValidating(false);
   };
 
-  const getEmailPlaceholder = () => {
-    if (["Student", "Instructor", "Admin"].includes(role)) {
-      return "netid@tamu.edu";
-    }
-    return "judge@example.com";
+  const getUsernamePlaceholder = () => {
+    return role === "Admin" ? "admin" : role === "Student" ? "student1" : role === "Instructor" ? "instructor1" : "judge1";
   };
-
-  const getEmailHint = () => {
-    if (["Student", "Instructor", "Admin"].includes(role)) {
-      return "Must be a valid Texas A&M email";
-    }
-    return "Any email address";
-  };
-
-  const isEmailValid = email && validateEmailDomain(email, role);
 
   return (
     <div style={{
@@ -184,7 +162,7 @@ export default function LoginPage({ onLogin }) {
               </div>
             </div>
 
-            {/* Email */}
+            {/* Username */}
             <div>
               <label style={{
                 display: "block",
@@ -192,36 +170,28 @@ export default function LoginPage({ onLogin }) {
                 marginBottom: "0.5rem",
                 color: "var(--color-text)",
                 fontSize: "0.9375rem"
-              }}>Email Address</label>
+              }}>Username</label>
               <input
-                type="email"
-                placeholder={getEmailPlaceholder()}
-                value={email}
+                type="text"
+                placeholder={getUsernamePlaceholder()}
+                value={username}
                 onChange={(e) => {
-                  setEmail(e.target.value);
+                  setUsername(e.target.value);
                   if (error) setError("");
                 }}
                 disabled={isValidating}
                 style={{
                   width: "100%",
                   padding: "0.875rem",
-                  border: isEmailValid ? "2px solid var(--color-success)" : "2px solid #e5e7eb",
+                  border: "2px solid #e5e7eb",
                   borderRadius: "0.625rem",
                   fontSize: "1rem",
                   boxSizing: "border-box",
-                  background: isEmailValid ? "rgba(16, 185, 129, 0.02)" : "white",
+                  background: "white",
                   transition: "all 0.2s ease",
                   fontFamily: "inherit"
                 }}
               />
-              <small style={{
-                display: "block",
-                color: "var(--color-text-secondary)",
-                marginTop: "0.375rem",
-                fontSize: "0.8125rem"
-              }}>
-                {getEmailHint()}
-              </small>
             </div>
 
             {/* Password */}
@@ -258,10 +228,10 @@ export default function LoginPage({ onLogin }) {
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={isValidating || !email || !password || !isEmailValid}
+              disabled={isValidating || !username || !password}
               style={{
                 padding: "0.9375rem",
-                background: isValidating || !email || !password || !isEmailValid 
+                background: isValidating || !username || !password 
                   ? "#d1d5db" 
                   : "linear-gradient(135deg, var(--color-maroon) 0%, #7a1d1d 100%)",
                 color: "white",
@@ -269,7 +239,7 @@ export default function LoginPage({ onLogin }) {
                 borderRadius: "0.625rem",
                 fontWeight: 700,
                 fontSize: "1rem",
-                cursor: isValidating || !email || !password || !isEmailValid ? "not-allowed" : "pointer",
+                cursor: isValidating || !username || !password ? "not-allowed" : "pointer",
                 transition: "all 0.2s ease",
                 marginTop: "0.5rem"
               }}

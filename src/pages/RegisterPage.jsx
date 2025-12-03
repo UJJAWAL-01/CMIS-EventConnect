@@ -55,13 +55,9 @@ export default function RegisterPage({ onRegister }) {
     special: /[^a-zA-Z0-9]/.test(password),
   }), [password]);
 
-  // Email validation for organizational members
+  // Email validation - accept any valid email
   const validateEmailDomain = (emailValue, selectedRole) => {
-    const tamuPattern = /@tamu\.edu$/;
-    if (["Student", "Instructor", "Admin"].includes(selectedRole)) {
-      return tamuPattern.test(emailValue);
-    }
-    return true; // Judges don't need @tamu.edu
+    return true; // Accept any valid email format
   };
 
   // Check if all requirements are met
@@ -130,39 +126,63 @@ export default function RegisterPage({ onRegister }) {
       return;
     }
 
-    if (["Judge", "Instructor", "Admin"].includes(role) && !extraFields.organization.trim()) {
+    if (["Judge", "Instructor"].includes(role) && !extraFields.organization.trim()) {
       setError("Organization/Company is required for this role.");
       setIsValidating(false);
       return;
     }
 
-    if (["Judge", "Instructor", "Admin"].includes(role) && !extraFields.title.trim()) {
+    if (["Judge", "Instructor"].includes(role) && !extraFields.title.trim()) {
       setError("Title/Role is required for this role.");
       setIsValidating(false);
       return;
     }
 
-    const payload = {
-      fullName: fullName.trim(),
-      email: email.toLowerCase(),
-      password,
-      role,
-      ...extraFields,
-      registeredAt: new Date().toISOString(),
-    };
+    // Call backend registration API
+    try {
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: email.toLowerCase(),
+          password,
+          role: role.toLowerCase(),
+          name: fullName.trim()
+        })
+      });
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 800));
+      const data = await response.json();
 
-    console.log("REGISTER", payload);
+      if (!response.ok) {
+        throw new Error(data.message || 'Registration failed');
+      }
 
-    setSuccess(`Account created successfully! Welcome, ${fullName.split(" ")[0]}!`);
-    
-    if (onRegister) {
-      onRegister(role);
+      setSuccess(`Account created successfully! Welcome, ${fullName.split(" ")[0]}!`);
+      
+      // Auto-login after successful registration
+      const loginResponse = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: email.toLowerCase(), password })
+      });
+
+      if (loginResponse.ok) {
+        const loginData = await loginResponse.json();
+        localStorage.setItem('auth_token', loginData.token);
+        if (onRegister) {
+          onRegister(role);
+        }
+      } else {
+        // Registration succeeded but login failed - user can manually login
+        setTimeout(() => {
+          if (onRegister) onRegister(role);
+        }, 1500);
+      }
+    } catch (err) {
+      setError(err.message || 'Registration failed. Please try again.');
+    } finally {
+      setIsValidating(false);
     }
-
-    setIsValidating(false);
   };
 
   const handleExtraChange = (field, value) => {
@@ -172,20 +192,14 @@ export default function RegisterPage({ onRegister }) {
   const isStudent = role === "Student";
   const isJudge = role === "Judge";
   const isInstructor = role === "Instructor";
-  const isAdmin = role === "Admin";
+  // const isAdmin = role === "Admin";
 
   const getEmailPlaceholder = () => {
-    if (["Student", "Instructor", "Admin"].includes(role)) {
-      return "netid@tamu.edu";
-    }
-    return "judge@example.com";
+    return "your.email@example.com";
   };
 
   const getEmailHint = () => {
-    if (["Student", "Instructor", "Admin"].includes(role)) {
-      return "Must be a valid Texas A&M email";
-    }
-    return "Any email address";
+    return "This will be your username for login";
   };
 
   return (
@@ -418,7 +432,7 @@ export default function RegisterPage({ onRegister }) {
               </div>
             )}
 
-            {(isJudge || isInstructor || isAdmin) && (
+            {(isJudge || isInstructor) && (
               <>
                 <div>
                   <label style={{
